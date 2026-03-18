@@ -1,6 +1,6 @@
-# NASC WEA Alert Generator
+# WEA Alert Generator
 
-A tool for generating Wireless Emergency Alerts for autistic children who elope. Built for the [National Autism Safety Council](https://www.autismsafetycouncil.org).
+A tool for generating Wireless Emergency Alerts for autistic children who elope, based on the [NASC SafeSearch for Autism](https://www.autismsafetycouncil.org) protocol.
 
 Live at: [https://doshilabs.github.io/nasc-wea/](https://doshilabs.github.io/nasc-wea/)
 
