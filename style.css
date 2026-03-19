@@ -327,7 +327,6 @@ input[type="number"]:focus {
 }
 
 .editing-badge {
-  display: inline-flex;
   align-items: center;
   padding: 0.15rem 0.6rem;
   border-radius: 999px;
@@ -337,6 +336,7 @@ input[type="number"]:focus {
   color: var(--color-caution);
   border: 1px solid rgba(217,119,6,.2);
 }
+.editing-badge:not([hidden]) { display: inline-flex; }
 
 .preview-card {
   background: var(--color-surface);
