@@ -28,7 +28,7 @@ export default {
     '{{#clothing}}, {{clothing}}{{/clothing}}' +
     '{{#non-speaking}}, NON-SPEAKING{{/non-speaking}}. ' +
     '{{#location}}LAST SEEN: {{location}}. {{/location}}' +
-    'SEARCH ALL WATER NOW (nearby pools/ponds/drains/spas/tanks etc. even if covered or dirty) and inside cars.' +
+    'SEARCH ALL WATER NOW (nearby ponds/pools/lakes/all types even if dirty) and inside cars.' +
     '{{#may-hide}} Child may HIDE.{{/may-hide}} ' +
     'STAY AT WATER if able. IF SEEN, call 9-1-1',
 
