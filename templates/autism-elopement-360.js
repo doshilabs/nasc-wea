@@ -12,6 +12,8 @@
 export default {
   id: 'autism-elopement-360',
   name: 'Autistic Elopement — 360 characters',
+  charLimit: 360,
+  charCaution: 340,
 
   description:
     'Based on the NASC <strong>S-E-A-R-C-H</strong> protocol. ' +

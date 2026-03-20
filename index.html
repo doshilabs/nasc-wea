@@ -54,7 +54,7 @@
         <div class="preview-card" id="preview-card">
           <div class="preview-header">
             <div class="char-counter" id="char-counter" data-state="safe">
-              <span id="char-count">0</span><span class="char-limit"> / 360 chars</span>
+              <span id="char-count">0</span><span class="char-limit"> / <span id="char-limit-display">360</span> chars</span>
               <span class="char-badge" id="char-badge" hidden></span>
             </div>
           </div>
@@ -75,7 +75,7 @@
         </div>
 
         <div class="wea-note">
-          <strong>Enhanced WEA limit: 360 characters.</strong> If over the limit, use the Edit button to trim the text manually.
+          <strong>Enhanced WEA limit: <span id="wea-note-limit">360</span> characters.</strong> If over the limit, use the Edit button to trim the text manually.
         </div>
 
       </section>

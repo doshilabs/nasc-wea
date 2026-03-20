@@ -1,9 +1,6 @@
 import { templates } from './templates.js';
 import { renderTemplate, normalizeValues } from './render.js';
 
-const CHAR_LIMIT = 360;
-const CHAR_CAUTION = 300;
-
 // --- State -------------------------------------------------------------------
 
 let activeTemplate = templates[0];
@@ -105,6 +102,8 @@ function loadTemplate(tmpl) {
   activeTemplate = tmpl;
 
   document.getElementById('template-desc').innerHTML = tmpl.description || '';
+  document.getElementById('char-limit-display').textContent = tmpl.charLimit;
+  document.getElementById('wea-note-limit').textContent = tmpl.charLimit;
 
   fieldsContainer.innerHTML = '';
   for (const field of tmpl.fields) {
@@ -146,8 +145,8 @@ function generateAlertText() {
 // --- Preview + counter -------------------------------------------------------
 
 function getCharState(len) {
-  if (len > CHAR_LIMIT) return 'over';
-  if (len >= CHAR_CAUTION) return 'caution';
+  if (len > activeTemplate.charLimit) return 'over';
+  if (len >= activeTemplate.charCaution) return 'caution';
   return 'safe';
 }
 
@@ -193,7 +192,7 @@ function updatePreview() {
 }
 
 function updateCopyButton(len) {
-  if (len > CHAR_LIMIT) {
+  if (len > activeTemplate.charLimit) {
     copyBtn.textContent = 'Copy Anyway (Over Limit)';
     copyBtn.classList.add('over-limit');
   } else {
