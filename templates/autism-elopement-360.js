@@ -22,16 +22,25 @@ export default {
   template:
     '{{#agency}}{{agency}}: {{/agency}}' +
     'MISSING CHILD with AUTISM. EXTREME DROWNING RISK. ' +
-    '{{#child-name}}{{child-name}}' +
-    '{{#age}}, Age {{age}}{{/age}}' +
-    '{{#race-gender}}, {{race-gender}}{{/race-gender}}' +
-    '{{#clothing}}, {{clothing}}{{/clothing}}' +
-    '{{#descriptor}}, {{descriptor}}{{/descriptor}}' +
-    '{{#non-speaking}}, NONSPEAKING{{/non-speaking}}. {{/child-name}}' +
+    '{{child-desc}}' +
     '{{#location}}Last seen near {{location}}. {{/location}}' +
     'SEARCH ALL WATER NOW (ponds, pools, drains, spas, tanks - even if covered or dirty) and inside cars.' +
     '{{#may-hide}} Child may HIDE.{{/may-hide}} ' +
     'Stay at water if safe. IF SEEN, call 9-1-1.',
+
+  // Builds the child-description clause by joining only the fields that are
+  // present, so the list shows whenever ANY element (including NONSPEAKING) is
+  // set — without a leading comma or filler word, and omitted entirely if empty.
+  derived(v) {
+    const parts = [];
+    if (v['child-name'])   parts.push(v['child-name']);
+    if (v['age'])          parts.push('age ' + v['age']);
+    if (v['race-gender'])  parts.push(v['race-gender']);
+    if (v['clothing'])     parts.push(v['clothing']);
+    if (v['descriptor'])   parts.push(v['descriptor']);
+    if (v['non-speaking']) parts.push('NONSPEAKING');
+    return { 'child-desc': parts.length ? parts.join(', ') + '. ' : '' };
+  },
 
   fields: [
     {
@@ -39,18 +48,13 @@ export default {
       label: 'Issuing agency',
       type: 'text',
       placeholder: 'e.g. Smithtown Police Department',
+      hint: "Consider removing 'department' or 'office' from agency names if you need to shorten the message.",
     },
     {
       id: 'child-name',
       label: "Child's full name",
       type: 'text',
       placeholder: 'e.g. Jane Doe',
-    },
-    {
-      id: 'race-gender',
-      label: 'Race & gender',
-      type: 'text',
-      placeholder: 'e.g. white female',
     },
     {
       id: 'age',
@@ -61,10 +65,18 @@ export default {
       max: 17,
     },
     {
+      id: 'race-gender',
+      label: 'Race & gender',
+      type: 'text',
+      placeholder: 'e.g. white female',
+      autocapitalize: 'none',
+    },
+    {
       id: 'clothing',
       label: 'Clothing',
       type: 'text',
       placeholder: 'e.g. pink pajamas',
+      autocapitalize: 'none',
     },
     {
       id: 'descriptor',
@@ -72,12 +84,14 @@ export default {
       type: 'text',
       placeholder: 'e.g. barefoot',
       hint: 'e.g. in diapers, on foot, barefoot',
+      autocapitalize: 'none',
     },
     {
       id: 'location',
       label: 'Last seen',
       type: 'text',
       placeholder: 'e.g. 800 Hill Avenue',
+      autocapitalize: 'none',
     },
   ],
 

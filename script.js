@@ -7,6 +7,10 @@ let activeTemplate = templates[0];
 let isEditMode = false;
 let editOriginalText = '';
 
+// Persistent field/checkbox values, keyed by id. Survives template switches so
+// that fields unique to one template (e.g. child-name) are restored on return.
+const fieldValues = {};
+
 // --- DOM refs ----------------------------------------------------------------
 
 const templateSelect   = document.getElementById('template-select');
@@ -60,6 +64,7 @@ function buildFieldGroup(field) {
   input.autocomplete = 'off';
   input.autocorrect = 'off';
   input.spellcheck = false;
+  if (field.autocapitalize) input.autocapitalize = field.autocapitalize;
   if (field.min !== undefined) input.min = field.min;
   if (field.max !== undefined) input.max = field.max;
   if (field.type === 'number') input.inputMode = 'numeric';
@@ -108,11 +113,17 @@ function loadTemplate(tmpl) {
   fieldsContainer.innerHTML = '';
   for (const field of tmpl.fields) {
     fieldsContainer.appendChild(buildFieldGroup(field));
+    if (field.id in fieldValues) {
+      document.getElementById(field.id).value = fieldValues[field.id];
+    }
   }
 
   cbContainer.innerHTML = '';
   for (const cb of tmpl.checkboxes) {
     cbContainer.appendChild(buildCheckbox(cb));
+    if (cb.id in fieldValues) {
+      document.getElementById(cb.id).checked = fieldValues[cb.id];
+    }
   }
   behaviorFieldset.hidden = tmpl.checkboxes.length === 0;
 
@@ -138,7 +149,11 @@ function getFieldValues() {
 // --- Alert generation --------------------------------------------------------
 
 function generateAlertText() {
-  return renderTemplate(activeTemplate.template, getFieldValues());
+  const values = getFieldValues();
+  const merged = typeof activeTemplate.derived === 'function'
+    ? { ...values, ...activeTemplate.derived(values) }
+    : values;
+  return renderTemplate(activeTemplate.template, merged);
 }
 
 // --- Preview + counter -------------------------------------------------------
@@ -299,8 +314,14 @@ async function handleCopy() {
 function attachFieldListeners() {
   const inputs = fieldsContainer.querySelectorAll('input[type="text"], input[type="number"]');
   const checkboxes = cbContainer.querySelectorAll('input[type="checkbox"]');
-  inputs.forEach(el => el.addEventListener('input', updatePreview));
-  checkboxes.forEach(el => el.addEventListener('change', updatePreview));
+  inputs.forEach(el => el.addEventListener('input', () => {
+    fieldValues[el.id] = el.value;
+    updatePreview();
+  }));
+  checkboxes.forEach(el => el.addEventListener('change', () => {
+    fieldValues[el.id] = el.checked;
+    updatePreview();
+  }));
 }
 
 function init() {

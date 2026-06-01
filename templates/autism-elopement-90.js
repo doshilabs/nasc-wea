@@ -22,10 +22,18 @@ export default {
   template:
     '{{#agency}}{{agency}}: {{/agency}}' +
     'MISSING CHILD w/ AUTISM' +
-    '{{#race-gender}} {{race-gender}}{{/race-gender}}' +
-    '{{#age}}, Age {{age}}{{/age}}' +
-    '{{#clothing}}, {{clothing}}{{/clothing}}' +
+    '{{child-desc}}' +
     '. SEARCH WATER NOW.',
+
+  // Joins the present description fields (age before race/gender) into one
+  // clause, so reordering is centralized and no dangling comma can appear.
+  derived(v) {
+    const parts = [];
+    if (v['age'])         parts.push('age ' + v['age']);
+    if (v['race-gender']) parts.push(v['race-gender']);
+    if (v['clothing'])    parts.push(v['clothing']);
+    return { 'child-desc': parts.length ? ', ' + parts.join(', ') : '' };
+  },
 
   fields: [
     {
@@ -33,12 +41,7 @@ export default {
       label: 'Issuing agency',
       type: 'text',
       placeholder: 'e.g. Smithtown Police Department',
-    },
-    {
-      id: 'race-gender',
-      label: 'Race & gender',
-      type: 'text',
-      placeholder: 'e.g. white female',
+      hint: "Consider removing 'department' or 'office' from agency names if you need to shorten the message.",
     },
     {
       id: 'age',
@@ -49,10 +52,18 @@ export default {
       max: 17,
     },
     {
+      id: 'race-gender',
+      label: 'Race & gender',
+      type: 'text',
+      placeholder: 'e.g. white female',
+      autocapitalize: 'none',
+    },
+    {
       id: 'clothing',
       label: 'Clothing',
       type: 'text',
       placeholder: 'e.g. pink pajamas',
+      autocapitalize: 'none',
     },
   ],
 
