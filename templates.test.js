@@ -3,17 +3,25 @@ import assert from 'node:assert/strict';
 import { renderTemplate } from './render.js';
 import { templates } from './templates.js';
 
-// Helper: find template by id and render with given values
+// Helper: find template by id and render with given values, applying the
+// template's derived() step first — mirrors generateAlertText() in script.js.
+function renderWith(tmpl, values) {
+  const merged = typeof tmpl.derived === 'function'
+    ? { ...values, ...tmpl.derived(values) }
+    : values;
+  return renderTemplate(tmpl.template, merged);
+}
+
 const template360 = templates.find(t => t.id === 'autism-elopement-360');
 assert.ok(template360, 'autism-elopement-360 template must exist');
 function render(values) {
-  return renderTemplate(template360.template, values);
+  return renderWith(template360, values);
 }
 
 const template90 = templates.find(t => t.id === 'autism-elopement-90');
 assert.ok(template90, 'autism-elopement-90 template must exist');
 function render90(values) {
-  return renderTemplate(template90.template, values);
+  return renderWith(template90, values);
 }
 
 // --- renderTemplate ----------------------------------------------------------
@@ -70,14 +78,14 @@ describe('autism-elopement-360 template', () => {
       descriptor: 'barefoot',
     });
     assert.ok(
-      out.includes('Jane Doe, Age 4, white female, pink pajamas, barefoot'),
+      out.includes('Jane Doe, age 4, white female, pink pajamas, barefoot'),
       `Unexpected order in: ${out}`
     );
   });
 
-  test('age renders with capitalized "Age" prefix', () => {
+  test('age renders with "age" prefix', () => {
     const out = render({ 'child-name': 'Alex', age: '7' });
-    assert.ok(out.includes('Alex, Age 7'), `Expected "Alex, Age 7" in: ${out}`);
+    assert.ok(out.includes('Alex, age 7'), `Expected "Alex, age 7" in: ${out}`);
   });
 
   // Location
@@ -106,7 +114,7 @@ describe('autism-elopement-360 template', () => {
 
   test('missing race & gender is skipped cleanly', () => {
     const out = render({ 'child-name': 'Alex', 'race-gender': '', age: '7' });
-    assert.ok(out.includes('Alex, Age 7'));
+    assert.ok(out.includes('Alex, age 7'));
   });
 
   // Checkboxes
@@ -120,12 +128,13 @@ describe('autism-elopement-360 template', () => {
     assert.ok(!out.includes('NONSPEAKING'));
   });
 
-  // Empty / default state — no dangling comma when no name is entered
+  // Empty / default state — no dangling comma when no name is entered, and
+  // NONSPEAKING still shows even when it is the only descriptor element
   test('empty render (no name) has no dangling comma before NONSPEAKING', () => {
     const out = render({ 'non-speaking': true });
     assert.ok(!out.includes(', NONSPEAKING'), `Dangling comma in: ${out}`);
     assert.ok(!out.includes('RISK. ,'), `Dangling comma in: ${out}`);
-    assert.ok(out.includes('EXTREME DROWNING RISK. SEARCH ALL WATER NOW'), `Unexpected joint in: ${out}`);
+    assert.ok(out.includes('EXTREME DROWNING RISK. NONSPEAKING. SEARCH ALL WATER NOW'), `Unexpected joint in: ${out}`);
   });
 
   test('may-hide: true includes "Child may HIDE."', () => {
@@ -198,10 +207,13 @@ describe('autism-elopement-90 template', () => {
     assert.match(out, /^MISSING CHILD w\/ AUTISM/);
   });
 
-  // Descriptor: race & gender, age, clothing
-  test('race & gender, age, and clothing render between AUTISM and SEARCH', () => {
+  // Descriptor: age, race & gender, clothing
+  test('age, race & gender, and clothing render between AUTISM and SEARCH', () => {
     const out = render90({ 'race-gender': 'white female', age: '4', clothing: 'pink pajamas' });
-    assert.ok(out.includes('MISSING CHILD w/ AUTISM white female, Age 4, pink pajamas. SEARCH WATER NOW.'));
+    assert.ok(
+      out.includes('MISSING CHILD w/ AUTISM, age 4, white female, pink pajamas. SEARCH WATER NOW.'),
+      `Unexpected descriptor in: ${out}`
+    );
   });
 
   test('static-only render has no orphan punctuation', () => {
