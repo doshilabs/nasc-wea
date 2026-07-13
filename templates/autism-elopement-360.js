@@ -14,11 +14,6 @@ export default {
   name: 'Autistic Elopement — 360 characters',
   charLimit: 360,
 
-  description:
-    'Based on the NASC <strong>SEARCH</strong> protocol. ' +
-    '<a href="https://cdn.prod.website-files.com/691df36c2bfdd23b8c789f03/69a70c2680bdb2d968255577_SafeSearch%20for%20Autism.pdf" ' +
-    'target="_blank" rel="noopener">Download the SafeSearch for Autism protocol (PDF)</a>.',
-
   template:
     '{{#agency}}{{agency}}: {{/agency}}' +
     'MISSING CHILD with AUTISM. EXTREME DROWNING RISK. ' +
