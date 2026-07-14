@@ -25,6 +25,15 @@ Plain HTML, CSS, and JavaScript. No build step, no dependencies.
 
 To change the alert wording, edit `buildAlert()` in `script.js`.
 
+## Usage analytics
+
+The site logs `page_view` and `alert_copied` events to a Google Sheet via a
+Google Apps Script web app (`analytics.js`). Only event metadata is recorded —
+template id, character count, over-limit/edited flags, and a random
+per-page-load session id. **Form field contents (names, locations) are never
+transmitted**, no cookies or storage are used, and Apps Script does not
+expose visitor IP addresses.
+
 ## Resources
 
 - [SafeSearch for Autism protocol (PDF)](https://cdn.prod.website-files.com/691df36c2bfdd23b8c789f03/69a70c2680bdb2d968255577_SafeSearch%20for%20Autism.pdf)

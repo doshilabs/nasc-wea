@@ -1,5 +1,6 @@
 import { templates } from './templates.js';
 import { renderTemplate } from './render.js';
+import { trackEvent } from './analytics.js';
 
 // --- State -------------------------------------------------------------------
 
@@ -283,6 +284,12 @@ function showCopyFeedback() {
 
 async function handleCopy() {
   const text = getAlertTextForCopy();
+  trackEvent('alert_copied', {
+    template: activeTemplate.id,
+    chars: text.length,
+    over_limit: text.length > activeTemplate.charLimit,
+    edited: isEditMode,
+  });
   try {
     await navigator.clipboard.writeText(text);
     showCopyFeedback();
@@ -340,6 +347,7 @@ function init() {
   });
 
   loadTemplate(activeTemplate);
+  trackEvent('page_view');
 }
 
 document.addEventListener('DOMContentLoaded', init);
